@@ -1,0 +1,30 @@
+{
+  "name": "employee_management_integration_system",
+  "version": "1.0.0",
+  "description": "Basic Implementation of CRUD",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server",
+    "server": "nodemon start"
+  },
+  "keywords": [
+    "CRUD",
+    "Basic"
+  ],
+  "author": "Joseledgy",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "colors": "^1.4.0",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "joi": "^17.3.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.10.14",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.6"
+  }
+}
