@@ -3,19 +3,21 @@ const dotenv = require('dotenv');
 const colors = require('colors');
 const morgan = require('morgan');
 const cors = require('cors');
-const connectDB = require('./config/db');
+// const connectDB = require('./config/db');
 
 const auth = require('./routes/auth');
 const user = require('./routes/user');
+const attendance = require('./routes/attendance');
 
 dotenv.config({ path: './config/config.env' });
 
-connectDB();
+// connectDB();
 
 let app = express();
 
 app.use(express.json());
 app.use(cors());
+app.use('/api/v1/attendance', attendance);
 app.use('/api/v1/auth', auth);
 app.use('/api/v1/user', user);
 

@@ -1,2 +1,0 @@
-{"_id":{"$oid":"5ea2e38a89397a5ad9b3bd64"},"name":"Joseph Legere","email":"josephrlegere@gmail.com","password":"$2a$10$XjN45ptGeRVtg6xK4zIS/.vMGOubzp/7Kz1wzbgNvSpzgeiX/7ogO","type":"customer","role":"regular","createdAt":{"$date":{"$numberLong":"1587733386255"}},"__v":{"$numberInt":"0"}}
-{"_id":{"$oid":"5fb36736d06ff96780759c77"},"name":"Masood Patel","email":"example@gmail.com","password":"$2a$10$.s1ghWJHqFwIbgLEPaq9luqFyduCi4ovhwoyOOPGRyBLldePYhJsu","role":"admin","createdAt":{"$date":{"$numberLong":"1605592886112"}},"__v":{"$numberInt":"0"}}
