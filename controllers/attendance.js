@@ -6,20 +6,12 @@ const axios = require('axios');
 //  @access Public
 exports.attendanceList = async (req, res) => {
     try {
-        //const attendance = await User.find();
-        const res_service = await axios.post('http://gemserve.com.qa/gemserve/gemrest/attendance-archives_get-process.php', {
-            dskEntry: "1",
-            st: "confirmed",
-            dt: "current"
-        });
-
-        // console.log(res_service.data)
+        list = req.pass_var;
 
         return res.status(200).json({
             success: true,
-            data: res_service.data
-            // count: attendance.length,
-            // data: attendance
+            count: list.length,
+            data: list
         });
     }
     catch (err) {
