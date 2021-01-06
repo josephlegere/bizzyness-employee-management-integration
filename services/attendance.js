@@ -5,11 +5,11 @@ const format = require('../utils/json_formatter');
 
 module.exports = async (req, res, next) => {
 
+    let { st, dt } = req.body;
+
     try {
         const res_service = await axios.post(process.env.EXTERNAL_API + process.env.API_ATTENDANCE, {
-            dskEntry: "1",
-            st: "confirmed",
-            dt: "current"
+            dskEntry: "1", st, dt
         });
 
         let attendance_list = {};

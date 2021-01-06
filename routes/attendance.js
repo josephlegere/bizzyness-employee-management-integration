@@ -5,6 +5,9 @@ const { attendanceList } = require('../controllers/attendance');
 
 router
     .route('/')
-    .get(requestAttendance, attendanceList);
+    .post(requestAttendance, attendanceList);
+
+// router
+//     .route('verify')
 
 module.exports = router;
