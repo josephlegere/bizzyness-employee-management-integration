@@ -1,13 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const requestAttendance = require('../services/attendance');
-const { attendanceList } = require('../controllers/attendance');
+const { getAttendance, updateAttendance } = require('../services/attendance');
+const { attendanceList, verifyAttendance } = require('../controllers/attendance');
 
 router
     .route('/')
-    .post(requestAttendance, attendanceList);
+    .post(getAttendance, attendanceList);
 
-// router
-//     .route('verify')
+router
+    .route('/confirm')
+    .post(updateAttendance, verifyAttendance);
 
 module.exports = router;

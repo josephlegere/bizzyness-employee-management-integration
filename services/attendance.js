@@ -1,19 +1,20 @@
 //Retrieve Data from External API
 
 const axios = require('axios');
+const moment = require('moment');
 const format = require('../utils/json_formatter');
 
-module.exports = async (req, res, next) => {
+exports.getAttendance = async (req, res, next) => {
 
     let { st, dt } = req.body;
 
     try {
-        const res_service = await axios.post(process.env.EXTERNAL_API + process.env.API_ATTENDANCE, {
+        const get_service = await axios.post(process.env.EXTERNAL_API + process.env.API_ATTENDANCE_GET, {
             dskEntry: "1", st, dt
         });
 
         let attendance_list = {};
-        let _list = format.convertAttendanceData(res_service.data.attendance_list);
+        let _list = format.convertAttendanceData(get_service.data.attendance_list);
         _list.forEach(elem => {
             let generate_key = `${elem.date.substr(0, 10)}_${elem.employee.id}`;
 
@@ -52,7 +53,41 @@ module.exports = async (req, res, next) => {
     catch (err) {
         return res.status(400).json({
             success: false,
-            error: 'Denied Access!'
+            error: 'Error in Request!'
         });
     }
+}
+
+exports.updateAttendance = async (req, res, next) => {
+
+    let _attendance_raw = req.body.list;
+    let _path = req.route.path.replace(/[^a-zA-Z ]/g, '');
+    let _path_list = {
+        'confirm': 'confirm'
+    }
+
+    let _attendance_formatted = _attendance_raw.map((elem) => {
+        let { date } = elem;
+        return { empid: elem.uniqueid, date };
+    });
+
+    console.log(_attendance_formatted)
+
+    try {
+        req.type = _path_list[_path];
+        const update_service = await axios.post(process.env.EXTERNAL_API + process.env.API_ATTENDANCE_UPDATE, {
+            dskEntry: "1", 
+            atn: _attendance_formatted,
+            cnf: "1001",
+            cl: "sta"
+        });
+        next();
+    }
+    catch (err) {
+        return res.status(400).json({
+            success: false,
+            error: 'Error in Request!'
+        });
+    }
+
 }
