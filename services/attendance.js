@@ -63,23 +63,23 @@ exports.updateAttendance = async (req, res, next) => {
     let _attendance_raw = req.body.list;
     let _path = req.route.path.replace(/[^a-zA-Z ]/g, '');
     let _path_list = {
-        'confirm': 'confirm'
+        'confirm': { action: 'confirm', code: 'sta', list_title: 'atn' },
+        'reject': { action: 'reject', code: 'rej', list_title: 'rej' }
     }
 
     let _attendance_formatted = _attendance_raw.map((elem) => {
         let { date } = elem;
         return { empid: elem.uniqueid, date };
     });
-
-    console.log(_attendance_formatted)
+    // console.log(_attendance_formatted)
 
     try {
-        req.type = _path_list[_path];
+        req.type = _path_list[_path].action;
         const update_service = await axios.post(process.env.EXTERNAL_API + process.env.API_ATTENDANCE_UPDATE, {
             dskEntry: "1", 
-            atn: _attendance_formatted,
+            [_path_list[_path].list_title]: _attendance_formatted,
             cnf: "1001",
-            cl: "sta"
+            cl: _path_list[_path].code
         });
         next();
     }

@@ -11,4 +11,8 @@ router
     .route('/confirm')
     .post(updateAttendance, verifyAttendance);
 
+router
+    .route('/reject')
+    .post(updateAttendance, verifyAttendance);
+
 module.exports = router;
