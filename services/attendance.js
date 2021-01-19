@@ -15,6 +15,9 @@ exports.getAttendance = async (req, res, next) => {
 
         let attendance_list = {};
         let _list = format.convertAttendanceData(get_service.data.attendance_list);
+        // console.log(_list);
+
+        // convert attendance that would be better suited for the client
         _list.forEach(elem => {
             let generate_key = `${elem.date.substr(0, 10)}_${elem.employee.id}`;
 
@@ -38,6 +41,7 @@ exports.getAttendance = async (req, res, next) => {
                 delete attendance_list[generate_key].place;
             }
         });
+        // console.log(attendance_list);
 
         // sort attendance list
         ordered_attendace_list = Object.keys(attendance_list).sort().reduce(

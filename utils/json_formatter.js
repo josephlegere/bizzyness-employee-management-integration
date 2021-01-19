@@ -19,12 +19,21 @@ exports.convertAttendanceData = data => {
     list.forEach(elem => {
         let _temp = {};
 
+        // In the legacy service there are generated timings to fillup timings of weekends and holidays
+        // There's a new method, generated timings are skipped
+        if (elem['attendinput'] !== 'manual') return;
+        
+        //The loop is to split up the timings into separate objects, attendin & attendout
         for (i = 0; i < 2; i++) {
             _temp = {};
             let _status = 0;
 
-            if (elem['attendstatus'] == 'for confirmation') _status = 1;
-            else if (elem['attendstatus'] == 'for confirmation') _status = 2;
+            //this is not really needed as the rejected and canceled are all filtered out from the legacy service
+            //this is only for formality to copy the format of the new system
+            if (elem['attendstatus'] == 'confirmed') _status = 'confirmed'; //checked and confirmed
+            else if (elem['attendstatus'] == 'for confirmation') _status = 'pending'; //pending
+            else if (elem['attendstatus'] == 'rejected') _status = 'rejected'; //rejected
+            else if (elem['attendstatus'] == 'canceled') _status = 'canceled'; //canceled
 
             _temp = {
                 date: elem['attenddate'],
@@ -43,6 +52,8 @@ exports.convertAttendanceData = data => {
             formatted.push(_temp);
         }
     });
+
+    // console.log(formatted)
 
     return formatted;
 }
