@@ -8,10 +8,28 @@ exports.attendanceList = async (req, res) => {
     try {
         let list = req.pass_var;
 
+        // begins with 0 => Sunday
+        // array because it could include multiple weekend days
+        let dayoffs = [
+            {
+                txt: 'Friday',
+                num: 5,
+                format: 'MomentJS'
+            }
+        ];
+
         return res.status(200).json({
             success: true,
-            count: list.length,
-            data: list
+            data: {
+                attendance: {
+                    count: list.length,
+                    list
+                },
+                dayoffs: {
+                    count: dayoffs.length,
+                    list: dayoffs
+                }
+            }
         });
     }
     catch (err) {
