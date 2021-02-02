@@ -6,10 +6,12 @@ const format = require('../utils/json_formatter');
 
 exports.getAttendance = async (req, res, next) => {
 
-    let { st, dt } = req.body;
+    let { st, dt, tenant } = req.body;
+    // console.log(tenant);
 
     try {
-        const get_service = await axios.post(process.env.EXTERNAL_API + process.env.API_ATTENDANCE_GET, {
+        // const get_service = await axios.post(process.env.EXTERNAL_API + process.env.API_ATTENDANCE_GET, {
+        const get_service = await axios.post(tenant.system_config.server_host.api + process.env.API_ATTENDANCE_GET, {
             dskEntry: "1", st, dt
         });
 
