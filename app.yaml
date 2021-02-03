@@ -1,7 +1,7 @@
 ## LIVE
-service: employee-management-integration
+# service: employee-management-integration
 
 ## TESTING
-# service: employee-management-integration-testing
+service: employee-management-integration-testing
 
 runtime: nodejs14

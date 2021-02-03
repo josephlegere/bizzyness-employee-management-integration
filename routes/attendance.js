@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getAttendance, updateAttendance } = require('../services/attendance');
+const { getAttendance, updateAttendance } = require('../services/designate_service');
 const { attendanceList, verifyAttendance } = require('../controllers/attendance');
 
 router

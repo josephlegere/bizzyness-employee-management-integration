@@ -1,17 +1,15 @@
 //Retrieve Data from External API
 
 const axios = require('axios');
-const moment = require('moment');
 const format = require('../utils/json_formatter');
 
-exports.getAttendance = async (req, res, next) => {
+exports.getAttendance = async (server_api, params) => {
 
-    let { st, dt, tenant } = req.body;
-    // console.log(tenant);
+    let { st, dt } = params;
 
     try {
         // const get_service = await axios.post(process.env.EXTERNAL_API + process.env.API_ATTENDANCE_GET, {
-        const get_service = await axios.post(tenant.system_config.server_host.api + process.env.API_ATTENDANCE_GET, {
+        const get_service = await axios.post(server_api + process.env.API_ATTENDANCE_GET, {
             dskEntry: "1", st, dt
         });
 
@@ -53,21 +51,17 @@ exports.getAttendance = async (req, res, next) => {
         attendance_list = Object.values(attendance_list);
         // console.log(attendance_list)
 
-        req.pass_var = attendance_list;
-        next();
+        return attendance_list;
+        
     }
     catch (err) {
-        return res.status(400).json({
-            success: false,
-            error: 'Error in Request!'
-        });
+        return err;
     }
 }
 
-exports.updateAttendance = async (req, res, next) => {
+exports.updateAttendance = async (server_api, path, list) => {
 
-    let _attendance_raw = req.body.list;
-    let _path = req.route.path.replace(/[^a-zA-Z ]/g, '');
+    let _attendance_raw = list;
     let _path_list = {
         'confirm': { action: 'confirm', code: 'sta', list_title: 'atn' },
         'reject': { action: 'reject', code: 'rej', list_title: 'rej' }
@@ -80,20 +74,16 @@ exports.updateAttendance = async (req, res, next) => {
     // console.log(_attendance_formatted)
 
     try {
-        req.type = _path_list[_path].action;
-        const update_service = await axios.post(process.env.EXTERNAL_API + process.env.API_ATTENDANCE_UPDATE, {
+        const update_service = await axios.post(server_api + process.env.API_ATTENDANCE_UPDATE, {
             dskEntry: "1", 
-            [_path_list[_path].list_title]: _attendance_formatted,
+            [_path_list[path].list_title]: _attendance_formatted,
             cnf: "1001",
-            cl: _path_list[_path].code
+            cl: _path_list[path].code
         });
-        next();
+        return _path_list[path].action;
     }
     catch (err) {
-        return res.status(400).json({
-            success: false,
-            error: 'Error in Request!'
-        });
+        return err;
     }
 
 }
