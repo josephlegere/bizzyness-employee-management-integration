@@ -1,19 +1,10 @@
-const mongoose = require('mongoose');
+const fireadmin = require('firebase-admin');
+const serviceAccount = require('../keys/bizzyness-ddf6e-firebase-adminsdk-9fnf6-2f73c4402a.json');
 
-const connectDB = async () => {
-    try {
-        const conn = await mongoose.connect(process.env.MONGO_URI, {
-            useNewUrlParser: true,
-            useCreateIndex: true,
-            useUnifiedTopology: true
-        });
+fireadmin.initializeApp({
+  credential: fireadmin.credential.cert(serviceAccount)
+});
 
-        console.log(`MongoDB Connected: ${conn.connection.host}`.cyan.underline.bold);
-    }
-    catch (err) {
-        console.log(`Error: ${err.message}`.red);
-        process.exit(1);
-    }
-}
+const db = fireadmin.firestore();
 
-module.exports = connectDB;
+module.exports = db;

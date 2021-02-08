@@ -1,4 +1,5 @@
-const { getAttendance, updateAttendance } = require('../services/attendance');
+const { getAttendance: getAttendance_lamp, updateAttendance: updateAttendance_lamp } = require('./attendance_lamp');
+const { getAttendance: getAttendance_fire, updateAttendance: updateAttendance_fire } = require('./attendance_fire');
 
 let attendance_task = {
     checker: {
@@ -24,14 +25,27 @@ exports.getAttendance = (req, res, next) => {
 
         console.log('This is using firebase');
 
-        next();
+        getAttendance_fire(tenant)
+        .then(res_fire => {
+            console.log(res_fire);
 
+            req.pass_var = res_fire;
+            next();
+        })
+        .catch(err => {
+            console.error(err);
+
+            return res.status(400).json({
+                success: false,
+                error: 'Error in Request!'
+            });
+        });
     }
     else if (tenant.system_config.server_type.type === 'hybrid_lamp_fire') {
         
         console.log('This is using LAMP and firebase');
 
-        getAttendance(tenant.system_config.server_host.api, attendance_task[task])
+        getAttendance_lamp(tenant.system_config.server_host.api, attendance_task[task])
         .then(res => {
             console.log(res);
 
@@ -71,7 +85,7 @@ exports.updateAttendance = (req, res, next) => {
 
         console.log(path, list);
         
-        updateAttendance(tenant.system_config.server_host.api, path, list).then(res => {
+        updateAttendance_lamp(tenant.system_config.server_host.api, path, list).then(res => {
             console.log(res);
 
             req.type = res;
