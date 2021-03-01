@@ -6,7 +6,7 @@ exports.getAttendance = (tenant) => {
 
     let query_db = db
         .collection('attendance')
-        .where('tenant', '==', tenant.tenantid)
+        .where('tenant', '==', `tenants/${tenant}`)
         .get();
     
     return new Promise(function (resolve, reject) {

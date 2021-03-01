@@ -4,8 +4,8 @@ const { getAttendance, updateAttendance } = require('../services/designate_servi
 const { attendanceList, verifyAttendance } = require('../controllers/attendance');
 
 router
-    .route('/')
-    .post(getAttendance, attendanceList);
+    .route('/:client/:task/:server/:tenant')
+    .get(getAttendance, attendanceList);
 
 router
     .route('/confirm')

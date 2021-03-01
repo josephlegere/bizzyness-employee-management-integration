@@ -15,13 +15,14 @@ let attendance_task = {
 exports.getAttendance = (req, res, next) => {
     // console.log(dest_code[tenant.system_config.server_type.type].note);
 
-    let { task, tenant } = req.body;
+    // let { task, tenant } = req.body;
+    let { client, task, server, tenant } = req.params;
 
     console.log('Get Attendance');
 
-    console.log(tenant);
+    // console.log(tenant);
     
-    if (tenant.system_config.server_type.type === 'pure_fire') {
+    if (server === 'pure_fire') {
 
         console.log('This is using firebase');
 
@@ -41,13 +42,15 @@ exports.getAttendance = (req, res, next) => {
             });
         });
     }
-    else if (tenant.system_config.server_type.type === 'hybrid_lamp_fire') {
+    else if (server === 'hybrid_lamp_fire') {
+        
+        let { external_api } = req.headers;
         
         console.log('This is using LAMP and firebase');
 
-        getAttendance_lamp(tenant.system_config.server_host.api, attendance_task[task])
+        getAttendance_lamp(external_api, attendance_task[task])
         .then(res => {
-            console.log(res);
+            // console.log(res);
 
             req.pass_var = res;
             next();
