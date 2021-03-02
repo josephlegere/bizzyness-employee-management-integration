@@ -4,7 +4,7 @@ const { getAttendance, updateAttendance } = require('../services/designate_servi
 const { attendanceList, verifyAttendance } = require('../controllers/attendance');
 
 router
-    .route('/:client/:task/:server/:tenant')
+    .route('/:client/:tenant/:user')
     .get(getAttendance, attendanceList);
 
 router

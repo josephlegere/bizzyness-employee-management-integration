@@ -3,7 +3,7 @@
 const axios = require('axios');
 const format = require('../utils/json_formatter');
 
-exports.getAttendance = async (server_api, params) => {
+exports.getAttendance = async (server_api, params, tenant) => {
 
     let { st, dt } = params;
 
@@ -14,7 +14,12 @@ exports.getAttendance = async (server_api, params) => {
         });
 
         let attendance_list = {};
-        let _list = format.convertAttendanceData(get_service.data.attendance_list);
+        let service_list = get_service.data.attendance_list;
+
+        if (params.hasOwnProperty('ucode'))
+            service_list = service_list.filter(timing => timing.attendempcode === params.ucode);
+
+        let _list = format.convertAttendanceData(service_list, tenant);
         // console.log(_list);
 
         // convert attendance that would be better suited for the client

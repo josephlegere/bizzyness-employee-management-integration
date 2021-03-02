@@ -1,4 +1,4 @@
-exports.convertAttendanceData = data => {
+exports.convertAttendanceData = (data, tenant) => {
     let formatted = [];
     let list = data;
 
@@ -44,7 +44,7 @@ exports.convertAttendanceData = data => {
                 },
                 place: elem['attendplace'],
                 status: _status,
-                tenant: 'tenants/HiternQX1hmdvcxnrSIr',
+                tenant: `tenants/${tenant}`,
                 timeinput: elem['attenddate'].substr(0, 11) + (i == 0 ? elem['attendin'] : elem['attendout']),
                 timeinputtype: (i == 0 ? 0 : 1)
             }
