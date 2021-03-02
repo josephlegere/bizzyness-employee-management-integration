@@ -64,10 +64,10 @@ exports.getAttendance = async (server_api, params, tenant) => {
     }
 }
 
-exports.updateAttendance = async (server_api, path, list) => {
+exports.verifyAttendance = async (server_api, task, list) => {
 
     let _attendance_raw = list;
-    let _path_list = {
+    let _task_list = {
         'confirm': { action: 'confirm', code: 'sta', list_title: 'atn' },
         'reject': { action: 'reject', code: 'rej', list_title: 'rej' }
     }
@@ -81,11 +81,11 @@ exports.updateAttendance = async (server_api, path, list) => {
     try {
         const update_service = await axios.post(server_api + process.env.API_ATTENDANCE_UPDATE, {
             dskEntry: "1", 
-            [_path_list[path].list_title]: _attendance_formatted,
+            [_task_list[task].list_title]: _attendance_formatted,
             cnf: "1001",
-            cl: _path_list[path].code
+            cl: _task_list[task].code
         });
-        return _path_list[path].action;
+        return _task_list[task].action;
     }
     catch (err) {
         return err;

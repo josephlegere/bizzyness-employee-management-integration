@@ -48,6 +48,6 @@ exports.getAttendance = (tenant) => {
 
 }
 
-exports.updateAttendance = async () => {
+exports.verifyAttendance = async () => {
 
 }

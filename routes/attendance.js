@@ -1,18 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const { getAttendance, updateAttendance } = require('../services/designate_service');
-const { attendanceList, verifyAttendance } = require('../controllers/attendance');
+const { getAttendance, verifyAttendance } = require('../services/designate_service');
+const { attendanceList, attendanceVerified } = require('../controllers/attendance');
 
 router
     .route('/:client/:tenant/:user')
     .get(getAttendance, attendanceList);
 
 router
-    .route('/confirm')
-    .post(updateAttendance, verifyAttendance);
-
-router
-    .route('/reject')
-    .post(updateAttendance, verifyAttendance);
+    .route('/verify/:task')
+    .post(verifyAttendance, attendanceVerified);
 
 module.exports = router;

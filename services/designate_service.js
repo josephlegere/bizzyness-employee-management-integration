@@ -1,5 +1,5 @@
-const { getAttendance: getAttendance_lamp, updateAttendance: updateAttendance_lamp } = require('./attendance_lamp');
-const { getAttendance: getAttendance_fire, updateAttendance: updateAttendance_fire } = require('./attendance_fire');
+const { getAttendance: getAttendance_lamp, verifyAttendance: verifyAttendance_lamp } = require('./attendance_lamp');
+const { getAttendance: getAttendance_fire, verifyAttendance: verifyAttendance_fire } = require('./attendance_fire');
 
 function attendance_task (client, query) {
 
@@ -92,10 +92,11 @@ exports.getAttendance = (req, res, next) => {
     }
 }
 
-exports.updateAttendance = (req, res, next) => {
+exports.verifyAttendance = (req, res, next) => {
 
     let { tenant, list } = req.body;
-    let path = req.route.path.replace(/[^a-zA-Z ]/g, '');
+    // let path = req.route.path.replace(/[^a-zA-Z ]/g, '');
+    let { task } = req.params;
 
     console.log('Update Attendance');
 
@@ -112,9 +113,9 @@ exports.updateAttendance = (req, res, next) => {
         
         console.log('This is using LAMP and firebase');
 
-        console.log(path, list);
+        console.log(task, list);
         
-        updateAttendance_lamp(tenant.system_config.server_host.api, path, list).then(res => {
+        verifyAttendance_lamp(tenant.system_config.server_host.api, task, list).then(res => {
             console.log(res);
 
             req.type = res;

@@ -40,7 +40,7 @@ exports.attendanceList = async (req, res) => {
     }
 }
 
-exports.verifyAttendance = async (req, res) => {
+exports.attendanceVerified = async (req, res) => {
     try {
         let { type } = req;
 
