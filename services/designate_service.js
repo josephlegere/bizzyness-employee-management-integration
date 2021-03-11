@@ -1,4 +1,4 @@
-const { getAttendance: getAttendance_lamp, verifyAttendance: verifyAttendance_lamp } = require('./attendance_lamp');
+const { getAttendance: getAttendance_lamp, verifyAttendance: verifyAttendance_lamp, addAttendance: addAttendance_lamp } = require('./attendance_lamp');
 const { getAttendance: getAttendance_fire, verifyAttendance: verifyAttendance_fire } = require('./attendance_fire');
 
 function attendance_task (client, query) {
@@ -41,6 +41,7 @@ exports.getAttendance = (req, res, next) => {
     let query = req.query;
     let { server_type } = req.headers;
     console.log(req.body);
+    console.log(req.headers);
 
     // console.log(task);
 
@@ -74,7 +75,7 @@ exports.getAttendance = (req, res, next) => {
         // console.log(req.params, req.headers);
         console.log('This is using LAMP and firebase');
 
-        getAttendance_lamp(external_api, attendance_task(client, query))
+        getAttendance_lamp(external_api, attendance_task(client, query), tenant)
         .then(res => {
             // console.log(res);
 
@@ -97,28 +98,75 @@ exports.verifyAttendance = (req, res, next) => {
     let { tenant, list } = req.body;
     // let path = req.route.path.replace(/[^a-zA-Z ]/g, '');
     let { task } = req.params;
+    let { server_type } = req.headers;
 
     console.log('Update Attendance');
 
     console.log(tenant);
 
-    if (tenant.system_config.server_type.type === 'pure_fire') {
+    if (server_type === 'pure_fire') {
 
         console.log('This is using firebase');
 
         next();
         
     }
-    else if (tenant.system_config.server_type.type === 'hybrid_lamp_fire') {
+    else if (server_type === 'hybrid_lamp_fire') {
+        
+        let { external_api } = req.headers;
         
         console.log('This is using LAMP and firebase');
 
         console.log(task, list);
         
-        verifyAttendance_lamp(tenant.system_config.server_host.api, task, list).then(res => {
+        verifyAttendance_lamp(external_api, task, list).then(res => {
             console.log(res);
 
             req.type = res;
+            next();
+        })
+        .catch(err => {
+            console.error(err);
+
+            return res.status(400).json({
+                success: false,
+                error: 'Error in Request!'
+            });
+        });
+
+    }
+
+}
+
+exports.addAttendance = (req, res, next) => {
+
+    let { server_type } = req.headers;
+    let { date, employee, timings } = req.body;
+    let { client, tenant } = req.params;
+
+    console.log('Add Attendance');
+    
+    if (server_type === 'pure_fire') {
+
+        console.log('This is using firebase');
+
+        next();
+
+    }
+    else if (server_type === 'hybrid_lamp_fire') {
+        
+        let { external_api } = req.headers;
+        let { service_uniq } = req.body;
+
+        console.log(external_api, service_uniq);
+        console.log(employee, timings, client, tenant);
+        console.log('This is using LAMP and firebase');
+        
+        next();
+
+        addAttendance_lamp(external_api, service_uniq, { date, timings }).then(res => {
+            console.log(res);
+
             next();
         })
         .catch(err => {

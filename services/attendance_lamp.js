@@ -1,6 +1,7 @@
 //Retrieve Data from External API
 
 const axios = require('axios');
+const moment = require('moment');
 const format = require('../utils/json_formatter');
 
 exports.getAttendance = async (server_api, params, tenant) => {
@@ -86,6 +87,41 @@ exports.verifyAttendance = async (server_api, task, list) => {
             cl: _task_list[task].code
         });
         return _task_list[task].action;
+    }
+    catch (err) {
+        return err;
+    }
+
+}
+
+exports.addAttendance = async (server_api, uniq, body) => {
+
+    let { date, timings } = body;
+    let _location = '';
+    let count = timings.length;
+
+    let _timings_formatted = timings.map((elem, key) => {
+        let { out, location } = elem;
+        if (location !== '') {
+            _location += location;
+            if (key + 1 < count) _location += ', ';
+        }
+        return { in: elem.in, out };
+    });
+    // console.log(_timings_formatted)
+    console.log(_location);
+
+    try {
+        const insert_service = await axios.post(server_api + process.env.API_ATTENDANCE_INSERT, {
+            dskEntry: "1",
+            uniq,
+            ain: {
+                date: moment(date).format('YYYY-MM-DD'),
+                timecheck: _timings_formatted,
+                place: _location
+            }
+        });
+        return insert_service.data;
     }
     catch (err) {
         return err;
