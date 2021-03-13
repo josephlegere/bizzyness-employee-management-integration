@@ -1,5 +1,7 @@
+const moment = require('moment');
+
 const { getAttendance: getAttendance_lamp, verifyAttendance: verifyAttendance_lamp, addAttendance: addAttendance_lamp } = require('./attendance_lamp');
-const { getAttendance: getAttendance_fire, verifyAttendance: verifyAttendance_fire } = require('./attendance_fire');
+const { getAttendance: getAttendance_fire, verifyAttendance: verifyAttendance_fire, addAttendance: addAttendance_fire } = require('./attendance_fire');
 
 function attendance_task (client, query) {
 
@@ -144,40 +146,79 @@ exports.addAttendance = (req, res, next) => {
     let { date, employee, timings } = req.body;
     let { client, tenant } = req.params;
 
+    let _timings_formatted = [];
+
     console.log('Add Attendance');
-    
-    if (server_type === 'pure_fire') {
 
-        console.log('This is using firebase');
+    console.log(employee, timings, client, tenant);
 
-        next();
+    timings.forEach(elem => {
+        let { out, location } = elem;
 
-    }
-    else if (server_type === 'hybrid_lamp_fire') {
-        
-        let { external_api } = req.headers;
-        let { service_uniq } = req.body;
-
-        console.log(external_api, service_uniq);
-        console.log(employee, timings, client, tenant);
-        console.log('This is using LAMP and firebase');
-        
-        next();
-
-        addAttendance_lamp(external_api, service_uniq, { date, timings }).then(res => {
-            console.log(res);
-
-            next();
-        })
-        .catch(err => {
-            console.error(err);
-
-            return res.status(400).json({
-                success: false,
-                error: 'Error in Request!'
-            });
+        _timings_formatted.push({
+            input: moment(`${moment(date).format('YYYY-MM-DD')} ${elem.in}`),
+            place: location,
+            type: 0
         });
 
-    }
+        _timings_formatted.push({
+            input: moment(`${moment(date).format('YYYY-MM-DD')} ${out}`),
+            place: location,
+            type: 1
+        });
+    });
+
+    addAttendance_fire({
+        created: moment(),
+        date: moment(date),
+        employee,
+        status: 'pending',
+        tenant: `tenants/${tenant}`,
+        timings: _timings_formatted
+    })
+    .then(res => {
+    
+        if (server_type === 'pure_fire') {
+
+            console.log('This is using firebase');
+
+            next();
+
+        }
+        else if (server_type === 'hybrid_lamp_fire') {
+            
+            console.log('This is using LAMP and firebase');
+            
+            let { external_api } = req.headers;
+            let { service_uniq } = req.body;
+
+            console.log(external_api, service_uniq);
+
+            addAttendance_lamp(external_api, service_uniq, { date, timings }).then(res => {
+                
+                console.log('Successfully Added a Time In, in LAMP DB');
+
+                next();
+            })
+            .catch(err => {
+                console.error(err);
+
+                return res.status(400).json({
+                    success: false,
+                    error: 'Error in Request!'
+                });
+            });
+
+        }
+
+    })
+    .catch(err => {
+        console.error(err);
+
+        return res.status(400).json({
+            success: false,
+            error: 'Error in Request!'
+        });
+    });
 
 }

@@ -51,3 +51,17 @@ exports.getAttendance = (tenant) => {
 exports.verifyAttendance = async () => {
 
 }
+
+exports.addAttendance = async (timings) => {
+    return new Promise(function (resolve, reject) {
+        db.collection('attendance').add(timings)
+            .then(ref => {
+                console.log('Successfully Added a Time In, in Firebase DB');
+
+                resolve(ref);
+            })
+            .catch(err => {
+                reject(err);
+            });
+    });
+}
