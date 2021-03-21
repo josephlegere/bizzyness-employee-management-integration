@@ -2,12 +2,23 @@
 
 const db = require('../config/db');
 
-exports.getAttendance = (tenant) => {
+exports.getAttendance = (client, tenant, user) => {
 
-    let query_db = db
-        .collection('attendance')
-        .where('tenant', '==', `tenants/${tenant}`)
-        .get();
+    let query_db;
+
+    if (client === 'manage') {
+        query_db = db
+            .collection('attendance')
+            .where('tenant', '==', `tenants/${tenant}`)
+            .get();
+    }
+    else if (client === 'employee') {
+        query_db = db
+            .collection('attendance')
+            .where('tenant', '==', `tenants/${tenant}`)
+            .where('employee.id', '==', `users/${user}`)
+            .get();
+    }
     
     return new Promise(function (resolve, reject) {
         query_db.then(snapshot => {

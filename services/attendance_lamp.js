@@ -6,19 +6,19 @@ const format = require('../utils/json_formatter');
 
 exports.getAttendance = async (server_api, params, tenant) => {
 
-    let { st, dt } = params;
+    let { st, dt, ur } = params;
 
     try {
         // const get_service = await axios.post(process.env.EXTERNAL_API + process.env.API_ATTENDANCE_GET, {
         const get_service = await axios.post(server_api + process.env.API_ATTENDANCE_GET, {
-            dskEntry: "1", st, dt
+            dskEntry: "1", st, dt, ur
         });
 
         let attendance_list = {};
         let service_list = get_service.data.attendance_list;
 
-        if (params.hasOwnProperty('ucode'))
-            service_list = service_list.filter(timing => timing.attendempcode === params.ucode);
+        // if (params.hasOwnProperty('ucode'))
+        //     service_list = service_list.filter(timing => timing.attendempcode === params.ucode);
 
         let _list = format.convertAttendanceData(service_list, tenant);
         // console.log(_list);
@@ -103,8 +103,10 @@ exports.addAttendance = async (server_api, uniq, body) => {
     let _timings_formatted = timings.map((elem, key) => {
         let { out, location } = elem;
         if (location !== '') {
-            _location += location;
-            if (key + 1 < count) _location += ', ';
+            if (_location === '') _location += location;
+            else {
+                _location += ', ' + location;
+            }
         }
         return { in: elem.in, out };
     });

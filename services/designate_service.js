@@ -23,7 +23,7 @@ function attendance_task (client, query) {
         return {
             st: "logged in",
             dt: "today",
-            ucode: service_uid
+            ur: service_uid
         };
     }
     else {
@@ -55,7 +55,7 @@ exports.getAttendance = (req, res, next) => {
 
         console.log('This is using firebase');
 
-        getAttendance_fire(tenant)
+        getAttendance_fire(client, tenant, user)
         .then(res_fire => {
             console.log(res_fire);
 
@@ -157,7 +157,7 @@ exports.addAttendance = (req, res, next) => {
 
         _timings_formatted.push({
             input: moment(`${moment(date).format('YYYY-MM-DD')} ${elem.in}`),
-            place: location,
+            place: '',
             type: 0
         });
 
@@ -173,6 +173,7 @@ exports.addAttendance = (req, res, next) => {
         date: moment(date),
         employee,
         status: 'pending',
+        confirmedBy: {},
         tenant: `tenants/${tenant}`,
         timings: _timings_formatted
     })
@@ -190,11 +191,11 @@ exports.addAttendance = (req, res, next) => {
             console.log('This is using LAMP and firebase');
             
             let { external_api } = req.headers;
-            let { service_uniq } = req.body;
+            let { service_unique } = req.body;
 
-            console.log(external_api, service_uniq);
+            console.log(external_api, service_unique);
 
-            addAttendance_lamp(external_api, service_uniq, { date, timings }).then(res => {
+            addAttendance_lamp(external_api, service_unique, { date, timings }).then(res => {
                 
                 console.log('Successfully Added a Time In, in LAMP DB');
 
