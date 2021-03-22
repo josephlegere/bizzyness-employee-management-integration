@@ -41,7 +41,7 @@ exports.getAttendance = (req, res, next) => {
     let { client, tenant, user } = req.params;
     // let { task } = req.query;
     let query = req.query;
-    let { server_type } = req.headers;
+    let server_type = req.headers['server-type'];
     console.log(req.body);
     console.log(req.headers);
 
@@ -73,7 +73,7 @@ exports.getAttendance = (req, res, next) => {
     }
     else if (server_type === 'hybrid_lamp_fire') {
         
-        let { external_api } = req.headers;
+        let external_api = req.headers['external-api'];
         // console.log(req.params, req.headers);
         console.log('This is using LAMP and firebase');
 
@@ -100,7 +100,7 @@ exports.verifyAttendance = (req, res, next) => {
     let { tenant, list } = req.body;
     // let path = req.route.path.replace(/[^a-zA-Z ]/g, '');
     let { task } = req.params;
-    let { server_type } = req.headers;
+    let server_type = req.headers['server-type'];
 
     console.log('Update Attendance');
 
@@ -115,7 +115,7 @@ exports.verifyAttendance = (req, res, next) => {
     }
     else if (server_type === 'hybrid_lamp_fire') {
         
-        let { external_api } = req.headers;
+        let external_api = req.headers['external-api'];
         
         console.log('This is using LAMP and firebase');
 
@@ -142,7 +142,7 @@ exports.verifyAttendance = (req, res, next) => {
 
 exports.addAttendance = (req, res, next) => {
 
-    let { server_type } = req.headers;
+    let server_type = req.headers['server-type'];
     let { date, employee, timings } = req.body;
     let { client, tenant } = req.params;
 
@@ -190,7 +190,7 @@ exports.addAttendance = (req, res, next) => {
             
             console.log('This is using LAMP and firebase');
             
-            let { external_api } = req.headers;
+            let external_api = req.headers['external-api'];
             let { service_unique } = req.body;
 
             console.log(external_api, service_unique);
