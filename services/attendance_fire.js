@@ -26,7 +26,7 @@ exports.getAttendance = (client, tenant, user) => {
 
             snapshot.forEach(doc => {
                 // console.log(doc.id, "=>", doc.data());
-                let { date, employee, status, tenant, timings } = doc.data();
+                let { date, employee, status, tenant, timings, special_date } = doc.data();
                 let _timings = [];
                 console.log(employee);
 
@@ -39,13 +39,16 @@ exports.getAttendance = (client, tenant, user) => {
                     });
                 });
 
-                list.push({
+                let _item = {
                     date: date.toDate(),
                     employee,
                     status,
                     tenant,
                     timings: _timings
-                });
+                };
+                if (special_date) _item.special_date = special_date;
+
+                list.push(_item);
             });
 
             // console.log(list);
@@ -63,9 +66,9 @@ exports.verifyAttendance = async () => {
 
 }
 
-exports.addAttendance = async (timings) => {
+exports.addAttendance = async (attend) => {
     return new Promise(function (resolve, reject) {
-        db.collection('attendance').add(timings)
+        db.collection('attendance').add(attend)
             .then(ref => {
                 console.log('Successfully Added a Time In, in Firebase DB');
 

@@ -143,7 +143,7 @@ exports.verifyAttendance = (req, res, next) => {
 exports.addAttendance = (req, res, next) => {
 
     let server_type = req.headers['server-type'];
-    let { date, employee, timings } = req.body;
+    let { date, employee, timings, special_date } = req.body;
     let { client, tenant } = req.params;
 
     let _timings_formatted = [];
@@ -168,7 +168,7 @@ exports.addAttendance = (req, res, next) => {
         });
     });
 
-    addAttendance_fire({
+    let query_add = {
         created: moment(),
         date: moment(date),
         employee,
@@ -176,7 +176,11 @@ exports.addAttendance = (req, res, next) => {
         confirmedBy: {},
         tenant: `tenants/${tenant}`,
         timings: _timings_formatted
-    })
+    }
+
+    if (special_date) query_add.special_date = special_date;
+
+    addAttendance_fire(query_add)
     .then(res => {
     
         if (server_type === 'pure_fire') {

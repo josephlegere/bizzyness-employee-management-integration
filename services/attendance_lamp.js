@@ -2,13 +2,27 @@
 
 const axios = require('axios');
 const moment = require('moment');
+
+const db = require('../config/db');
 const format = require('../utils/json_formatter');
 
 exports.getAttendance = async (server_api, params, tenant) => {
 
     let { st, dt, ur } = params;
+    let specialDates = {};
 
     try {
+        let query = await db
+            .collection('tenant_special_dates')
+            .doc(tenant)
+            .collection('special_dates')
+            .get();
+
+        query.forEach(doc => {
+            let _date = doc.data();
+            specialDates[moment(_date.date.toDate()).format('YYYYMMDD')] = _date;
+        });
+        
         // const get_service = await axios.post(process.env.EXTERNAL_API + process.env.API_ATTENDANCE_GET, {
         const get_service = await axios.post(server_api + process.env.API_ATTENDANCE_GET, {
             dskEntry: "1", st, dt, ur
@@ -41,6 +55,8 @@ exports.getAttendance = async (server_api, params, tenant) => {
                     type: elem.timeinputtype,
                     place: elem.place
                 });
+
+                if (specialDates[moment(elem.date).format('YYYYMMDD')]) attendance_list[generate_key].special_date = specialDates[moment(elem.date).format('YYYYMMDD')];
 
                 delete attendance_list[generate_key].timeinput;
                 delete attendance_list[generate_key].timeinputtype;
