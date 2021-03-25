@@ -55,7 +55,7 @@ exports.getAttendance = (req, res, next) => {
 
         console.log('This is using firebase');
 
-        getAttendance_fire(client, tenant, user)
+        getAttendance_fire(client, tenant, user, { task: query.task })
         .then(res_fire => {
             console.log(res_fire);
 
@@ -109,6 +109,8 @@ exports.verifyAttendance = (req, res, next) => {
     if (server_type === 'pure_fire') {
 
         console.log('This is using firebase');
+
+        verifyAttendance_fire(tenant, list, task);
 
         next();
         

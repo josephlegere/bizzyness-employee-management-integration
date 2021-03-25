@@ -36,6 +36,7 @@ exports.convertAttendanceData = (data, tenant) => {
             else if (elem['attendstatus'] == 'canceled') _status = 'canceled'; //canceled
 
             _temp = {
+                id: elem['attendcode'],
                 date: elem['attenddate'],
                 employee: {
                     account: 'Goodwill Electrical and Mechanical Services',

@@ -2,15 +2,25 @@
 
 const db = require('../config/db');
 
-exports.getAttendance = (client, tenant, user) => {
+exports.getAttendance = (client, tenant, user, query) => {
 
     let query_db;
 
     if (client === 'manage') {
-        query_db = db
-            .collection('attendance')
-            .where('tenant', '==', `tenants/${tenant}`)
-            .get();
+        let { task } = query;
+
+        if (task === 'checker') {
+            query_db = db.collection('attendance')
+                .where('tenant', '==', `tenants/${tenant}`)
+                .where('status', '==', `pending`)
+                .get();
+        }
+        else if (task === 'monitor') {
+            query_db = db.collection('attendance')
+                .where('tenant', '==', `tenants/${tenant}`)
+                .where('status', '==', `confirmed`)
+                .get();
+        }
     }
     else if (client === 'employee') {
         query_db = db
@@ -40,6 +50,7 @@ exports.getAttendance = (client, tenant, user) => {
                 });
 
                 let _item = {
+                    id: doc.id,
                     date: date.toDate(),
                     employee,
                     status,
@@ -62,8 +73,33 @@ exports.getAttendance = (client, tenant, user) => {
 
 }
 
-exports.verifyAttendance = async () => {
+exports.verifyAttendance = async (tenant, list, task) => {
+    // console.log(list);
 
+    let { id, name } = tenant;
+    let AttendanceRef = db.collection('attendance');
+    let AttendanceDocs = [];
+    let task_list = { 'confirm': 'confirmed', 'reject': 'rejected' }
+
+    try {
+        await db.runTransaction(async (transaction) => {
+            list.forEach((elem) => {
+                AttendanceDocs.push(AttendanceRef.doc(elem.attendid));
+            });
+
+            const transactionSnapshots = await transaction.getAll(...AttendanceDocs);
+
+            transactionSnapshots.forEach(transactionSnap => {
+                transaction.update(transactionSnap.ref, { verifiedBy: { id, name }, status: task_list[task] });
+            });
+        });
+
+        console.log(`Verification Successful! (${task_list[task]})`);
+        return `Verification Successful! (${task_list[task]})`;
+    }
+    catch (e) {
+        console.error('Transaction failure:', e);
+    }
 }
 
 exports.addAttendance = async (attend) => {

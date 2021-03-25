@@ -91,7 +91,7 @@ exports.verifyAttendance = async (server_api, task, list) => {
 
     let _attendance_formatted = _attendance_raw.map((elem) => {
         let { date } = elem;
-        return { empid: elem.uniqueid, date };
+        return { empid: elem.employeeid, date };
     });
     // console.log(_attendance_formatted)
 
