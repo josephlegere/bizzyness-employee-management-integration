@@ -1,6 +1,7 @@
 //Retrieve Data from Firebase
 
 const db = require('../config/db');
+const moment = require('moment');
 
 exports.getAttendance = (client, tenant, user, query) => {
 
@@ -27,6 +28,7 @@ exports.getAttendance = (client, tenant, user, query) => {
             .collection('attendance')
             .where('tenant', '==', `tenants/${tenant}`)
             .where('employee.id', '==', `users/${user}`)
+            .where('status', 'in', ['pending', 'confirmed'])
             .get();
     }
     
@@ -90,7 +92,7 @@ exports.verifyAttendance = async (tenant, list, task) => {
             const transactionSnapshots = await transaction.getAll(...AttendanceDocs);
 
             transactionSnapshots.forEach(transactionSnap => {
-                transaction.update(transactionSnap.ref, { verifiedBy: { id, name }, status: task_list[task] });
+                transaction.update(transactionSnap.ref, { verifiedBy: { id, name, date: moment() }, status: task_list[task] });
             });
         });
 
