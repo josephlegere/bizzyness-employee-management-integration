@@ -74,10 +74,11 @@ exports.getAttendance = (req, res, next) => {
     else if (server_type === 'hybrid_lamp_fire') {
         
         let external_api = req.headers['external-api'];
+        let server_timezone = req.headers['server-timezone'];
         // console.log(req.params, req.headers);
         console.log('This is using LAMP and firebase');
 
-        getAttendance_lamp(external_api, attendance_task(client, query), tenant)
+        getAttendance_lamp(external_api, server_timezone, attendance_task(client, query), tenant)
         .then(res => {
             // console.log(res);
 

@@ -1,12 +1,13 @@
 //Retrieve Data from External API
 
 const axios = require('axios');
-const moment = require('moment');
+// const moment = require('moment');
+const moment = require('moment-timezone');
 
 const db = require('../config/db');
 const format = require('../utils/json_formatter');
 
-exports.getAttendance = async (server_api, params, tenant) => {
+exports.getAttendance = async (server_api, timezone, params, tenant) => {
 
     let { st, dt, ur } = params;
     let specialDates = {};
@@ -20,7 +21,7 @@ exports.getAttendance = async (server_api, params, tenant) => {
 
         query.forEach(doc => {
             let _date = doc.data();
-            specialDates[moment(_date.date.toDate()).format('YYYYMMDD')] = _date;
+            specialDates[moment(_date.date.toDate()).tz(timezone).format('YYYYMMDD')] = { ..._date, id: doc.id };
         });
         
         // const get_service = await axios.post(process.env.EXTERNAL_API + process.env.API_ATTENDANCE_GET, {
