@@ -1,0 +1,3 @@
+dispatch:
+  - url: "integration.api.bizzyness.io/*"
+    service: employee-management-integration
