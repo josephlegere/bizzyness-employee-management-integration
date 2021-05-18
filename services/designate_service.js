@@ -176,9 +176,9 @@ exports.addAttendance = (req, res, next) => {
         date: moment(date),
         employee,
         status: 'pending',
-        confirmedBy: {},
         tenant: `tenants/${tenant}`,
-        timings: _timings_formatted
+        timings: _timings_formatted,
+        verifiedBy: {}
     }
 
     if (special_date) query_add.special_date = special_date;
