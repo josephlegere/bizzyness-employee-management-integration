@@ -153,7 +153,7 @@ exports.addAttendance = (req, res, next) => {
 
     console.log('Add Attendance');
 
-    console.log(employee, timings, client, tenant);
+    // console.log(employee, timings, client, tenant);
 
     timings.forEach(elem => {
         let { out, location } = elem;
@@ -228,5 +228,32 @@ exports.addAttendance = (req, res, next) => {
             error: 'Error in Request!'
         });
     });
+
+}
+
+exports.addSpecialdates = (req, res, next) => {
+
+    let server_type = req.headers['server-type'];
+    let { dates } = req.body;
+    let { client, tenant } = req.params;
+
+    console.log('Add Special Dates');
+
+    // console.log(client, tenant);
+
+    if (server_type === 'pure_fire') {
+
+        console.log('This is using firebase');
+
+        next();
+
+    }
+    else if (server_type === 'hybrid_lamp_fire') {
+
+        console.log('This is using LAMP and firebase');
+
+        next();
+
+    }
 
 }
