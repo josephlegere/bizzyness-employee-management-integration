@@ -3,6 +3,8 @@ const moment = require('moment');
 const { getAttendance: getAttendance_lamp, verifyAttendance: verifyAttendance_lamp, addAttendance: addAttendance_lamp } = require('./attendance_lamp');
 const { getAttendance: getAttendance_fire, verifyAttendance: verifyAttendance_fire, addAttendance: addAttendance_fire } = require('./attendance_fire');
 
+const { addSpecialdates: addSpecialdates_fire } = require('./specialdates_fire');
+
 function attendance_task (client, query) {
 
     let { task, service_uid } = query;
@@ -241,19 +243,32 @@ exports.addSpecialdates = (req, res, next) => {
 
     // console.log(client, tenant);
 
-    if (server_type === 'pure_fire') {
+    addSpecialdates_fire(dates, tenant)
+    .then(() => {
 
-        console.log('This is using firebase');
+        if (server_type === 'pure_fire') {
 
-        next();
+            console.log('This is using firebase');
 
-    }
-    else if (server_type === 'hybrid_lamp_fire') {
+            next();
 
-        console.log('This is using LAMP and firebase');
+        }
+        else if (server_type === 'hybrid_lamp_fire') {
 
-        next();
+            console.log('This is using LAMP and firebase');
 
-    }
+            next();
+
+        }
+            
+    })
+    .catch(err => {
+        console.error(err);
+
+        return res.status(400).json({
+            success: false,
+            error: 'Error in Request!'
+        });
+    });
 
 }
