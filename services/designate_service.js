@@ -3,6 +3,7 @@ const moment = require('moment');
 const { getAttendance: getAttendance_lamp, verifyAttendance: verifyAttendance_lamp, addAttendance: addAttendance_lamp } = require('./attendance_lamp');
 const { getAttendance: getAttendance_fire, verifyAttendance: verifyAttendance_fire, addAttendance: addAttendance_fire } = require('./attendance_fire');
 
+const { addSpecialdates: addSpecialdates_lamp } = require('./specialdates_lamp');
 const { addSpecialdates: addSpecialdates_fire } = require('./specialdates_fire');
 
 function attendance_task (client, query) {
@@ -256,6 +257,27 @@ exports.addSpecialdates = (req, res, next) => {
         else if (server_type === 'hybrid_lamp_fire') {
 
             console.log('This is using LAMP and firebase');
+            
+            let external_api = req.headers['external-api'];
+            let { employee_code } = req.body;
+
+            // console.log(external_api, employee_code);
+
+            addSpecialdates_lamp(external_api, employee_code, dates).then(res => {
+                
+                console.log(res);
+                console.log('Successfully Added a Time In, in LAMP DB');
+
+                next();
+            })
+            .catch(err => {
+                console.error(err);
+
+                return res.status(400).json({
+                    success: false,
+                    error: 'Error in Request!'
+                });
+            });
 
             next();
 
